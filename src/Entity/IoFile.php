@@ -6,9 +6,19 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\IoFileRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class IoFile
 {
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue()
+    {
+        $this->uploadedAt = new \DateTime();
+    }
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -25,6 +35,29 @@ class IoFile
      * @ORM\Column(type="datetime")
      */
     private $uploadedAt;
+
+    /**
+     * @ORM\Column(type="string",length=255,nullable=true)
+     */
+    private $device;
+
+    /**
+     * @return mixed
+     */
+    public function getDevice()
+    {
+        return $this->device;
+    }
+
+    /**
+     * @param mixed $device
+     */
+    public function setDevice($device)
+    {
+        $this->device = $device;
+    }
+
+
 
     public function getId(): ?int
     {
@@ -54,4 +87,5 @@ class IoFile
 
         return $this;
     }
+
 }

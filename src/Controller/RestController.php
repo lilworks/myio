@@ -85,12 +85,21 @@ class RestController extends AbstractFOSRestController
      */
     public function uploadAction(Request $request, FileUploader $fileUploader)
     {
+
+        $em = $this->getDoctrine()->getManager();
+
         foreach($request->files as $file){
-            dump($file->guessExtension());
-            $fileName = $fileUploader->upload($file);
-
+            $filename = $fileUploader->upload($file);
         }
-       die("foo");
+        $device = $request->query->get('device');
 
+
+        $ioFile = new IoFile();
+        $ioFile->setFilename($filename);
+        $ioFile->setDevice($device);
+        $em->persist($ioFile);
+        $em->flush();
+
+        return $this->view($ioFile, Response::HTTP_CREATED, ['Location' => $this->generateUrl('app_iofiles_show', ['id' => $ioFile->getId(), UrlGeneratorInterface::ABSOLUTE_URL])]);
     }
 }
